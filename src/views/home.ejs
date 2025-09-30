@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Home - Oollert Tasks</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Welcome, <%= currentUser.username %></h1>
+    <nav>
+      <a href="/tasks">My Board</a>
+      <form method="POST" action="/logout" style="display:inline">
+        <button type="submit">Logout</button>
+      </form>
+    </nav>
+  </header>
+  <main>
+    <p>UNDER CONSTRUCTION.</p>
+    <p><a href="/tasks">Go to your board</a></p>
+  </main>
+</body>
+</html>

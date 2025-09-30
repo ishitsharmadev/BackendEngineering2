@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>My Tasks - Oollert Tasks</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Oollert Tasks</h1>
+    <form method="POST" action="/logout" style="display:inline">
+      <button type="submit">Logout</button>
+    </form>
+  </header>
+
+  <main class="board">
+    <section class="column">
+      <h2>To Do</h2>
+      <form method="POST" action="/tasks">
+        <input name="title" placeholder="New task title" required />
+        <button type="submit">Add</button>
+      </form>
+      <div class="cards" id="todo">
+        <% tasks.filter(t => t.status === 'todo').forEach(t => { %>
+          <div class="card" data-id="<%= t._id %>">
+            <h3><%= t.title %></h3>
+            <p><%= t.description %></p>
+            <div class="actions">
+              <button class="move" data-target="inprogress">Move →</button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+
+    <section class="column">
+      <h2>In Progress</h2>
+      <div class="cards" id="inprogress">
+        <% tasks.filter(t => t.status === 'inprogress').forEach(t => { %>
+          <div class="card" data-id="<%= t._id %>">
+            <h3><%= t.title %></h3>
+            <p><%= t.description %></p>
+            <div class="actions">
+              <button class="move" data-target="done">Move →</button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+
+    <section class="column">
+      <h2>Done</h2>
+      <div class="cards" id="done">
+        <% tasks.filter(t => t.status === 'done').forEach(t => { %>
+          <div class="card" data-id="<%= t._id %>">
+            <h3><%= t.title %></h3>
+            <p><%= t.description %></p>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.querySelectorAll('.move').forEach(btn => {
+      btn.addEventListener('click', async e => {
+        const card = e.target.closest('.card');
+        const id = card.dataset.id;
+        const status = e.target.dataset.target;
+        const res = await fetch(`/tasks/${id}/move`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+        if (res.ok) location.reload();
+      });
+    });
+  </script>
+</body>
+</html>
