@@ -38,11 +38,40 @@ router.post('/', async (req, res) => {
 router.post('/:id/move', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
+  const userId = req.session.user.id;
+  
   try {
+    // Ensure user owns this task
+    const task = await Task.findOne({ _id: id, owner: userId });
+    if (!task) {
+      return res.status(404).json({ ok: false, message: 'Task not found' });
+    }
+    
     await Task.findByIdAndUpdate(id, { status });
     res.json({ ok: true });
   } catch (err) {
-    res.status(500).json({ ok: false });
+    console.error('Error moving task:', err);
+    res.status(500).json({ ok: false, message: 'Server error' });
+  }
+});
+
+// delete task
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  const userId = req.session.user.id;
+  
+  try {
+    // Ensure user owns this task before deleting
+    const task = await Task.findOne({ _id: id, owner: userId });
+    if (!task) {
+      return res.status(404).json({ ok: false, message: 'Task not found' });
+    }
+    
+    await Task.findByIdAndDelete(id);
+    res.json({ ok: true, message: 'Task deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting task:', err);
+    res.status(500).json({ ok: false, message: 'Server error' });
   }
 });
 
