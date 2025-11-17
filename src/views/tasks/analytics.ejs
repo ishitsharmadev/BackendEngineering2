@@ -215,6 +215,18 @@
       </form>
     </nav>
   </header>
+  <svg style="position: absolute; width: 0; height: 0;">
+  <defs>
+    <linearGradient id="pomodoroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="pomodoroGradientActive" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4caf50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#66bb6a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
 
   <div class="analytics-container">
     <h2 style="font-size: 28px; margin-bottom: 24px; color: #172b4d;">📊 Your Productivity Dashboard</h2>
@@ -401,5 +413,6 @@
       });
     });
   </script>
+  <script src="/js/pomodoro.js"></script>
 </body>
 </html>

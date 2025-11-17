@@ -497,3 +497,374 @@ main a:hover {
     left: 100%;
   }
 }
+.pomodoro-header {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0;
+  border-radius: 16px 0 0 0;
+  z-index: 10;
+}
+
+.pomodoro-toggle {
+  width: 40px;
+  height: 50px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.pomodoro-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.timer-icon {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+.pomodoro-content {
+  padding: 24px;
+}
+
+.pomodoro-task-info {
+  background: #f9fafb;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid #e5e7eb;
+}
+
+.task-title-display {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #172b4d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.clear-task-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.clear-task-btn:hover {
+  background: #e63946;
+  transform: scale(1.1);
+}
+
+.pomodoro-mode-selector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: #f4f5f7;
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5e6c84;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.mode-btn:hover {
+  color: #172b4d;
+}
+
+.mode-btn.active {
+  background: white;
+  color: #667eea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pomodoro-display {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 24px 0;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+  fill: none;
+  stroke: #f4f5f7;
+  stroke-width: 8;
+}
+
+.progress-ring-circle {
+  fill: none;
+  stroke: url(#pomodoroGradient);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.time-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 42px;
+  font-weight: 700;
+  color: #172b4d;
+  font-variant-numeric: tabular-nums;
+}
+
+.pomodoro-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.control-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.start-btn,
+.pause-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.start-btn:hover,
+.pause-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.reset-btn {
+  background: #f4f5f7;
+  color: #5e6c84;
+}
+
+.reset-btn:hover {
+  background: #dfe1e6;
+  color: #172b4d;
+}
+
+.pomodoro-stats {
+  background: linear-gradient(135deg, #e3fcef 0%, #d4f4e3 100%);
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #006644;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #006644;
+}
+
+.pomodoro-settings details {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 12px;
+  border: 2px solid #e5e7eb;
+}
+
+.pomodoro-settings summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #172b4d;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pomodoro-settings summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-content {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.setting-item {
+  margin-bottom: 16px;
+}
+
+.setting-item label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5e6c84;
+  margin-bottom: 6px;
+}
+
+.setting-item input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #dfe1e6;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.setting-item input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.save-settings-btn {
+  width: 100%;
+  padding: 10px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-settings-btn:hover {
+  background: #5a67d8;
+  transform: translateY(-1px);
+}
+
+/* Add gradient definition for progress ring */
+.pomodoro-display svg {
+  filter: drop-shadow(0 2px 8px rgba(102, 126, 234, 0.2));
+}
+
+/* Body class when pomodoro is active */
+body.pomodoro-active .pomodoro-timer {
+  box-shadow: -4px 0 32px rgba(102, 126, 234, 0.3);
+}
+
+body.pomodoro-active .progress-ring-circle {
+  stroke: url(#pomodoroGradientActive);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pomodoro-timer {
+    width: 280px;
+    top: 60px;
+  }
+  
+  .pomodoro-timer.collapsed {
+    transform: translateX(240px);
+  }
+  
+  .time-display {
+    font-size: 36px;
+  }
+  
+  .progress-ring {
+    width: 180px;
+    height: 180px;
+  }
+}
+
+/* Scrollbar styling for timer */
+.pomodoro-timer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.pomodoro-timer::-webkit-scrollbar-track {
+  background: #f4f5f7;
+}
+
+.pomodoro-timer::-webkit-scrollbar-thumb {
+  background: #dfe1e6;
+  border-radius: 3px;
+}
+
+.pomodoro-timer::-webkit-scrollbar-thumb:hover {
+  background: #c1c7d0;
+}
+
+/* Animation for timer completion */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.timer-complete .time-display {
+  animation: pulse 0.5s ease-in-out 3;
+  color: #4caf50;
+}
+
+/* Add SVG gradient definitions inline or via JS */
+.pomodoro-timer svg defs {
+  display: none;
+}
+
+/* Task card start timer button enhancement */
+.action-btn.start-timer {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.action-btn.start-timer:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6a3f8f 100%);
+  transform: scale(1.05);
+}

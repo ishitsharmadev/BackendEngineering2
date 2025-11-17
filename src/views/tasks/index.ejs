@@ -549,6 +549,18 @@
     </nav>
   </header>
 
+  <svg style="position: absolute; width: 0; height: 0;">
+  <defs>
+    <linearGradient id="pomodoroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="pomodoroGradientActive" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4caf50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#66bb6a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
   <% if (error && error.length) { %>
     <div style="position: fixed; top: 80px; right: 20px; z-index: 1000;">
       <div class="flash error"><%= error[0] %></div>
@@ -627,26 +639,33 @@
             </div>
             
             <div class="task-actions">
-              <% if (task.status === 'todo') { %>
-                <button class="action-btn" onclick="moveTask('<%= task._id %>', 'inprogress')">
-                  ▶ Start
-                </button>
-              <% } else if (task.status === 'inprogress') { %>
-                <button class="action-btn" onclick="moveTask('<%= task._id %>', 'todo')">
-                  ← Back
-                </button>
-                <button class="action-btn" onclick="moveTask('<%= task._id %>', 'done')">
-                  ✓ Done
-                </button>
-              <% } else if (task.status === 'done') { %>
-                <button class="action-btn" onclick="moveTask('<%= task._id %>', 'inprogress')">
-                  ↻ Reopen
-                </button>
-              <% } %>
-              <button class="action-btn delete" onclick="deleteTask('<%= task._id %>')">
-                Delete
-              </button>
-            </div>
+  <!-- Existing move buttons -->
+  <% if (task.status === 'todo') { %>
+    <button class="action-btn" onclick="moveTask('<%= task._id %>', 'inprogress')">
+      ▶ Start
+    </button>
+  <% } else if (task.status === 'inprogress') { %>
+    <button class="action-btn" onclick="moveTask('<%= task._id %>', 'todo')">
+      ← Back
+    </button>
+    <button class="action-btn" onclick="moveTask('<%= task._id %>', 'done')">
+      ✓ Done
+    </button>
+  <% } else if (task.status === 'done') { %>
+    <button class="action-btn" onclick="moveTask('<%= task._id %>', 'inprogress')">
+      ↻ Reopen
+    </button>
+  <% } %>
+  
+  <!-- NEW: Start Timer button -->
+  <button class="action-btn start-timer" onclick="startPomodoroForTask('<%= task._id %>', '<%= task.title.replace(/'/g, "\\'") %>')">
+    🍅 Timer
+  </button>
+  
+  <button class="action-btn delete" onclick="deleteTask('<%= task._id %>')">
+    Delete
+  </button>
+</div>
           </div>
         <% }) %>
         
@@ -838,6 +857,16 @@
         setTimeout(() => flash.remove(), 500);
       });
     }, 5000);
+    
+    // Function to start Pomodoro timer for a specific task
+    function startPomodoroForTask(taskId, taskTitle) {
+      if (window.pomodoroTimer) {
+      window.pomodoroTimer.setTask(taskId, taskTitle);
+      } else {
+        console.error('Pomodoro timer not initialized');
+      }
+    }
   </script>
+  <script src="/js/pomodoro.js"></script>
 </body>
 </html>
