@@ -2,22 +2,224 @@
 <html>
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home - Oollert Tasks</title>
   <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    .hero-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      text-align: center;
+    }
+    
+    .hero-title {
+      font-size: 48px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+    }
+    
+    .hero-subtitle {
+      font-size: 20px;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 40px;
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 60px;
+    }
+    
+    .feature-card {
+      background: white;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+    
+    .feature-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .feature-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #172b4d;
+      margin-bottom: 12px;
+    }
+    
+    .feature-desc {
+      color: #5e6c84;
+      line-height: 1.6;
+    }
+    
+    .cta-section {
+      margin-top: 60px;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .cta-button {
+      padding: 16px 40px;
+      background: white;
+      color: #667eea;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 18px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    
+    .cta-button.secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+    
+    .stats-banner {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 40px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 36px;
+      font-weight: 700;
+      color: white;
+    }
+    
+    .stat-label {
+      color: rgba(255,255,255,0.9);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 32px;
+      }
+      
+      .hero-subtitle {
+        font-size: 16px;
+      }
+      
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>Welcome, <%= currentUser.username %></h1>
+    <h1>Oollert Tasks</h1>
     <nav>
-      <a href="/tasks">My Board</a>
+      <a href="/home" style="color: #667eea; font-weight: 700;">Home</a>
+      <a href="/tasks">Board</a>
+      <a href="/tasks/smart">Smart View</a>
+      <a href="/tasks/analytics">Analytics</a>
       <form method="POST" action="/logout" style="display:inline">
         <button type="submit">Logout</button>
       </form>
     </nav>
   </header>
+
   <main>
-    <p>UNDER CONSTRUCTION.</p>
-    <p><a href="/tasks">Go to your board</a></p>
+    <div class="hero-section">
+      <h1 class="hero-title">Welcome back, <%= currentUser.username %>! 👋</h1>
+      <p class="hero-subtitle">Your intelligent task management system with powerful organization features</p>
+      
+      <div class="cta-section">
+        <a href="/tasks/smart" class="cta-button">🎯 Go to Smart View</a>
+        <a href="/tasks" class="cta-button secondary">📋 Board View</a>
+      </div>
+      
+      <div class="feature-grid">
+        <a href="/tasks" class="feature-card">
+          <div class="feature-icon">📋</div>
+          <h3 class="feature-title">Board View</h3>
+          <p class="feature-desc">Classic Kanban board with drag-and-drop. Organize tasks in To Do, In Progress, and Done columns.</p>
+        </a>
+        
+        <a href="/tasks/smart" class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3 class="feature-title">Smart View</h3>
+          <p class="feature-desc">Intelligent task organization by dates. See overdue, today, upcoming, and future tasks at a glance.</p>
+        </a>
+        
+        <a href="/tasks/analytics" class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-title">Analytics</h3>
+          <p class="feature-desc">Track your productivity with visual charts, completion rates, and personalized insights.</p>
+        </a>
+      </div>
+      
+      <div class="stats-banner">
+        <div class="stat-item">
+          <div class="stat-number">🔥</div>
+          <div class="stat-label">Priority System</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">📅</div>
+          <div class="stat-label">Due Dates</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">🏷️</div>
+          <div class="stat-label">Custom Labels</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">📈</div>
+          <div class="stat-label">Progress Tracking</div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 60px; padding: 32px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 12px;">
+        <h3 style="color: white; font-size: 24px; margin-bottom: 20px;">✨ Key Features</h3>
+        <div style="color: rgba(255,255,255,0.9); line-height: 2; text-align: left; max-width: 600px; margin: 0 auto;">
+          ✓ Four priority levels (Low, Medium, High, Urgent)<br>
+          ✓ Automatic task categorization by due date<br>
+          ✓ Custom labels for flexible organization<br>
+          ✓ Visual analytics and insights<br>
+          ✓ Drag-and-drop Kanban board<br>
+          ✓ Smart notifications for overdue tasks<br>
+          ✓ Completion rate tracking<br>
+          ✓ Mobile-responsive design
+        </div>
+      </div>
+    </div>
   </main>
 </body>
 </html>

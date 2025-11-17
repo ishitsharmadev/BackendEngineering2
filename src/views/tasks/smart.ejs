@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart View - Oollert Tasks</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    .smart-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px;
+    }
+    
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f4f5f7;
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #172b4d;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .section-count {
+      background: #667eea;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .task-item {
+      background: #f9fafb;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border-left: 4px solid #dfe1e6;
+      transition: all 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .task-item:hover {
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transform: translateX(4px);
+    }
+    
+    .task-item.priority-urgent {
+      border-left-color: #e63946;
+      background: #fff5f5;
+    }
+    
+    .task-item.priority-high {
+      border-left-color: #ff6b6b;
+      background: #fff8f7;
+    }
+    
+    .task-item.priority-medium {
+      border-left-color: #ffa500;
+    }
+    
+    .task-item.priority-low {
+      border-left-color: #4caf50;
+    }
+    
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    
+    .task-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #172b4d;
+      flex: 1;
+    }
+    
+    .task-badges {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .priority-badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .priority-urgent {
+      background: #e63946;
+      color: white;
+    }
+    
+    .priority-high {
+      background: #ff6b6b;
+      color: white;
+    }
+    
+    .priority-medium {
+      background: #ffa500;
+      color: white;
+    }
+    
+    .priority-low {
+      background: #4caf50;
+      color: white;
+    }
+    
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #dfe1e6;
+      color: #5e6c84;
+    }
+    
+    .task-meta {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      font-size: 13px;
+      color: #5e6c84;
+      margin-top: 8px;
+    }
+    
+    .task-due {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .task-due.overdue {
+      color: #e63946;
+      font-weight: 600;
+    }
+    
+    .task-labels {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    
+    .label-tag {
+      padding: 3px 10px;
+      background: #e3fcef;
+      color: #006644;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .task-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #f4f5f7;
+    }
+    
+    .action-btn {
+      padding: 6px 12px;
+      background: #f4f5f7;
+      color: #5e6c84;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .action-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+    
+    .action-btn.delete {
+      background: #ffebe6;
+      color: #bf2600;
+    }
+    
+    .action-btn.delete:hover {
+      background: #e63946;
+      color: white;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #5e6c84;
+    }
+    
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .add-task-form {
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+    
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #5e6c84;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 10px 12px;
+      border: 2px solid #dfe1e6;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .btn-primary {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+    
+    .section.overdue .section-title {
+      color: #e63946;
+    }
+    
+    .section.today .section-title {
+      color: #667eea;
+    }
+    
+    .view-toggle {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .view-btn {
+      padding: 10px 20px;
+      background: white;
+      color: #5e6c84;
+      border: 2px solid #dfe1e6;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .view-btn:hover,
+    .view-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Oollert Tasks</h1>
+    <nav>
+      <a href="/home">Home</a>
+      <a href="/tasks">Board</a>
+      <a href="/tasks/smart" style="color: #667eea; font-weight: 700;">Smart View</a>
+      <a href="/tasks/analytics">Analytics</a>
+      <form method="POST" action="/logout" style="display:inline">
+        <button type="submit">Logout</button>
+      </form>
+    </nav>
+  </header>
+
+  <% if (error && error.length) { %>
+    <div style="position: fixed; top: 80px; right: 20px; z-index: 1000;">
+      <div class="flash error"><%= error[0] %></div>
+    </div>
+  <% } %>
+  <% if (success && success.length) { %>
+    <div style="position: fixed; top: 80px; right: 20px; z-index: 1000;">
+      <div class="flash success"><%= success[0] %></div>
+    </div>
+  <% } %>
+
+  <div class="smart-container">
+    <div class="view-toggle">
+      <a href="/tasks" class="view-btn">Board View</a>
+      <a href="/tasks/smart" class="view-btn active">Smart View</a>
+      <a href="/tasks/analytics" class="view-btn">Analytics</a>
+    </div>
+
+    <!-- Add Task Form -->
+    <div class="add-task-form">
+      <h3 style="margin-bottom: 16px; color: #172b4d;">Add New Task</h3>
+      <form method="POST" action="/tasks">
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Task Title *</label>
+            <input name="title" placeholder="What needs to be done?" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Due Date</label>
+            <input name="dueDate" type="date" />
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select name="priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Labels (comma-separated)</label>
+            <input name="labels" placeholder="work, personal, urgent" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Description</label>
+            <textarea name="description" placeholder="Add more details..."></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Create Task</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Overdue Section -->
+    <% if (overdue.length > 0) { %>
+      <div class="section overdue">
+        <div class="section-header">
+          <div class="section-title">
+            ⚠️ Overdue
+            <span class="section-count"><%= overdue.length %></span>
+          </div>
+        </div>
+        <% overdue.forEach(task => { %>
+          <div class="task-item priority-<%= task.priority %>" data-id="<%= task._id %>">
+            <div class="task-header">
+              <div class="task-title"><%= task.title %></div>
+              <div class="task-badges">
+                <span class="priority-badge priority-<%= task.priority %>"><%= task.priority %></span>
+                <span class="status-badge"><%= task.status %></span>
+              </div>
+            </div>
+            <% if (task.description) { %>
+              <p style="color: #5e6c84; font-size: 14px; margin: 8px 0;"><%= task.description %></p>
+            <% } %>
+            <div class="task-meta">
+              <div class="task-due overdue">
+                📅 Due: <%= new Date(task.dueDate).toLocaleDateString() %>
+              </div>
+              <% if (task.labels && task.labels.length > 0) { %>
+                <div class="task-labels">
+                  <% task.labels.forEach(label => { %>
+                    <span class="label-tag"><%= label %></span>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+            <div class="task-actions">
+              <button class="action-btn complete-btn" data-id="<%= task._id %>">✓ Complete</button>
+              <button class="action-btn start-btn" data-id="<%= task._id %>">▶ Start</button>
+              <button class="action-btn delete" data-id="<%= task._id %>">Delete</button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <!-- Today Section -->
+    <div class="section today">
+      <div class="section-header">
+        <div class="section-title">
+          📌 Today
+          <span class="section-count"><%= today.length %></span>
+        </div>
+      </div>
+      <% if (today.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-state-icon">🎯</div>
+          <p>No tasks due today. You're all caught up!</p>
+        </div>
+      <% } else { %>
+        <% today.forEach(task => { %>
+          <div class="task-item priority-<%= task.priority %>" data-id="<%= task._id %>">
+            <div class="task-header">
+              <div class="task-title"><%= task.title %></div>
+              <div class="task-badges">
+                <span class="priority-badge priority-<%= task.priority %>"><%= task.priority %></span>
+                <span class="status-badge"><%= task.status %></span>
+              </div>
+            </div>
+            <% if (task.description) { %>
+              <p style="color: #5e6c84; font-size: 14px; margin: 8px 0;"><%= task.description %></p>
+            <% } %>
+            <div class="task-meta">
+              <div class="task-due">
+                📅 Today
+              </div>
+              <% if (task.labels && task.labels.length > 0) { %>
+                <div class="task-labels">
+                  <% task.labels.forEach(label => { %>
+                    <span class="label-tag"><%= label %></span>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+            <div class="task-actions">
+              <button class="action-btn complete-btn" data-id="<%= task._id %>">✓ Complete</button>
+              <button class="action-btn start-btn" data-id="<%= task._id %>">▶ Start</button>
+              <button class="action-btn delete" data-id="<%= task._id %>">Delete</button>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+
+    <!-- Upcoming Section -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">
+          📅 Upcoming (Next 7 Days)
+          <span class="section-count"><%= upcoming.length %></span>
+        </div>
+      </div>
+      <% if (upcoming.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-state-icon">📭</div>
+          <p>No upcoming tasks in the next week</p>
+        </div>
+      <% } else { %>
+        <% upcoming.forEach(task => { %>
+          <div class="task-item priority-<%= task.priority %>" data-id="<%= task._id %>">
+            <div class="task-header">
+              <div class="task-title"><%= task.title %></div>
+              <div class="task-badges">
+                <span class="priority-badge priority-<%= task.priority %>"><%= task.priority %></span>
+                <span class="status-badge"><%= task.status %></span>
+              </div>
+            </div>
+            <% if (task.description) { %>
+              <p style="color: #5e6c84; font-size: 14px; margin: 8px 0;"><%= task.description %></p>
+            <% } %>
+            <div class="task-meta">
+              <div class="task-due">
+                📅 Due: <%= new Date(task.dueDate).toLocaleDateString() %>
+              </div>
+              <% if (task.labels && task.labels.length > 0) { %>
+                <div class="task-labels">
+                  <% task.labels.forEach(label => { %>
+                    <span class="label-tag"><%= label %></span>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+            <div class="task-actions">
+              <button class="action-btn complete-btn" data-id="<%= task._id %>">✓ Complete</button>
+              <button class="action-btn start-btn" data-id="<%= task._id %>">▶ Start</button>
+              <button class="action-btn delete" data-id="<%= task._id %>">Delete</button>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+
+    <!-- Later Section -->
+    <% if (later.length > 0) { %>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">
+            📆 Later (7+ Days)
+            <span class="section-count"><%= later.length %></span>
+          </div>
+        </div>
+        <% later.forEach(task => { %>
+          <div class="task-item priority-<%= task.priority %>" data-id="<%= task._id %>">
+            <div class="task-header">
+              <div class="task-title"><%= task.title %></div>
+              <div class="task-badges">
+                <span class="priority-badge priority-<%= task.priority %>"><%= task.priority %></span>
+                <span class="status-badge"><%= task.status %></span>
+              </div>
+            </div>
+            <% if (task.description) { %>
+              <p style="color: #5e6c84; font-size: 14px; margin: 8px 0;"><%= task.description %></p>
+            <% } %>
+            <div class="task-meta">
+              <div class="task-due">
+                📅 Due: <%= new Date(task.dueDate).toLocaleDateString() %>
+              </div>
+              <% if (task.labels && task.labels.length > 0) { %>
+                <div class="task-labels">
+                  <% task.labels.forEach(label => { %>
+                    <span class="label-tag"><%= label %></span>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+            <div class="task-actions">
+              <button class="action-btn complete-btn" data-id="<%= task._id %>">✓ Complete</button>
+              <button class="action-btn start-btn" data-id="<%= task._id %>">▶ Start</button>
+              <button class="action-btn delete" data-id="<%= task._id %>">Delete</button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <!-- No Due Date Section -->
+    <% if (noDueDate.length > 0) { %>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">
+            📋 No Due Date
+            <span class="section-count"><%= noDueDate.length %></span>
+          </div>
+        </div>
+        <% noDueDate.forEach(task => { %>
+          <div class="task-item priority-<%= task.priority %>" data-id="<%= task._id %>">
+            <div class="task-header">
+              <div class="task-title"><%= task.title %></div>
+              <div class="task-badges">
+                <span class="priority-badge priority-<%= task.priority %>"><%= task.priority %></span>
+                <span class="status-badge"><%= task.status %></span>
+              </div>
+            </div>
+            <% if (task.description) { %>
+              <p style="color: #5e6c84; font-size: 14px; margin: 8px 0;"><%= task.description %></p>
+            <% } %>
+            <div class="task-meta">
+              <% if (task.labels && task.labels.length > 0) { %>
+                <div class="task-labels">
+                  <% task.labels.forEach(label => { %>
+                    <span class="label-tag"><%= label %></span>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+            <div class="task-actions">
+              <button class="action-btn complete-btn" data-id="<%= task._id %>">✓ Complete</button>
+              <button class="action-btn start-btn" data-id="<%= task._id %>">▶ Start</button>
+              <button class="action-btn delete" data-id="<%= task._id %>">Delete</button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    // Complete task
+    document.querySelectorAll('.complete-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        try {
+          const res = await fetch(`/tasks/${id}/move`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'done' })
+          });
+          if (res.ok) {
+            btn.closest('.task-item').style.opacity = '0';
+            setTimeout(() => location.reload(), 300);
+          }
+        } catch (err) {
+          console.error('Error:', err);
+        }
+      });
+    });
+
+    // Start task
+    document.querySelectorAll('.start-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        try {
+          const res = await fetch(`/tasks/${id}/move`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'inprogress' })
+          });
+          if (res.ok) {
+            location.reload();
+          }
+        } catch (err) {
+          console.error('Error:', err);
+        }
+      });
+    });
+
+    // Delete task
+    document.querySelectorAll('.action-btn.delete').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Delete this task?')) return;
+        const id = btn.dataset.id;
+        try {
+          const res = await fetch(`/tasks/${id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          if (res.ok) {
+            btn.closest('.task-item').style.opacity = '0';
+            setTimeout(() => btn.closest('.task-item').remove(), 300);
+          }
+        } catch (err) {
+          console.error('Error:', err);
+        }
+      });
+    });
+
+    // Auto-hide flash messages
+    setTimeout(() => {
+      document.querySelectorAll('.flash').forEach(flash => {
+        flash.style.transition = 'opacity 0.5s';
+        flash.style.opacity = '0';
+        setTimeout(() => flash.remove(), 500);
+      });
+    }, 5000);
+  </script>
+</body>
+</html>
