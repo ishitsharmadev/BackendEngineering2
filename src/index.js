@@ -50,15 +50,15 @@ const taskRoutes = require('./routes/tasks');
 app.use('/', authRoutes);
 app.use('/tasks', taskRoutes);
 
-// Home - redirect to smart view by default
+// Home
 app.get('/home', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
-  res.redirect('/tasks/smart');
+  res.render('home');
 });
 
 // Root
 app.get('/', (req, res) => {
-  if (req.session.user) return res.redirect('/tasks/smart');
+  if (req.session.user) return res.redirect('/home');
   res.redirect('/login');
 });
 
@@ -85,23 +85,4 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Internal Server Error' });
 });
 
-app.listen(PORT, () => {
-  console.log(`
-╔═══════════════════════════════════════════════════════════╗
-║                                                           ║
-║   🚀 Oollert Tasks Server Running                        ║
-║                                                           ║
-║   📍 URL: http://localhost:${PORT}                        ║
-║   📊 Environment: ${process.env.NODE_ENV || 'development'}                          ║
-║   💾 Database: ${MONGO_URI.includes('localhost') ? 'Local MongoDB' : 'MongoDB Atlas'}                              ║
-║                                                           ║
-║   Available Routes:                                       ║
-║   • /login          - User Login                         ║
-║   • /signup         - User Registration                  ║
-║   • /tasks          - Board View (Kanban)                ║
-║   • /tasks/smart    - Smart View (Today/Upcoming)        ║
-║   • /tasks/analytics - Analytics Dashboard               ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-  `);
-});
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
