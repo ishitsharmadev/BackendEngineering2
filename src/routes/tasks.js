@@ -240,4 +240,10 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Focus mode page
+router.get('/focus', (req, res) => {
+  res.render('tasks/focus');
+});
+
+
 module.exports = router;

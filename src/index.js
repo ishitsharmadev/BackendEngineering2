@@ -75,6 +75,8 @@ process.on('unhandledRejection', (reason, promise) => {
   // In dev we don't exit immediately, but in production consider exiting
 });
 
+
+
 // Error handler middleware (render friendly page in dev)
 app.use((err, req, res, next) => {
   console.error(err && err.stack ? err.stack : err);

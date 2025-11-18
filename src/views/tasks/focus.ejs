@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Focus Mode - Oollert Tasks</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #0a0e27;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    header {
+      position: relative;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    header h1 {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    header a {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    header a:hover {
+      color: rgba(255, 255, 255, 1);
+    }
+
+    header button {
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    header button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .focus-container {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: calc(100vh - 80px);
+      padding: 40px;
+    }
+
+    .focus-timer {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      width: 400px;
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+                  inset 0 0 60px rgba(255, 255, 255, 0.02);
+      position: relative;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .timer-glow {
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 70%);
+      animation: pulse 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    .timer-ring {
+      position: absolute;
+      width: 380px;
+      height: 380px;
+    }
+
+    .timer-ring-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.1);
+      stroke-width: 4;
+    }
+
+    .timer-ring-progress {
+      fill: none;
+      stroke: url(#focusGradient);
+      stroke-width: 4;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s linear;
+      filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
+    }
+
+    .timer-content {
+      text-align: center;
+      z-index: 2;
+    }
+
+    .timer-time {
+      font-size: 72px;
+      font-weight: 300;
+      color: white;
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 2px;
+      text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+    }
+
+    .timer-label {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.5);
+      margin: 16px 0 32px 0;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-weight: 600;
+    }
+
+    .timer-controls {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .control-button {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-button:hover {
+      background: rgba(102, 126, 234, 0.3);
+      border-color: rgba(102, 126, 234, 0.8);
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .control-button:active {
+      transform: scale(0.95);
+    }
+
+    .control-button.primary {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    }
+
+    .control-button.primary:hover {
+      transform: scale(1.15);
+      box-shadow: 0 12px 36px rgba(102, 126, 234, 0.6);
+    }
+
+    .mode-selector {
+      position: absolute;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      padding: 8px;
+      border-radius: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .mode-button {
+      padding: 10px 24px;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 32px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .mode-button:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .mode-button.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    }
+
+    .stats-display {
+      position: absolute;
+      top: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      padding: 16px 32px;
+      border-radius: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      gap: 40px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: white;
+      display: block;
+      text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 4px;
+      display: block;
+    }
+
+    .keyboard-hints {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 12px;
+    }
+
+    .keyboard-hint {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .key {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .focus-timer {
+        width: 320px;
+        height: 320px;
+      }
+
+      .timer-ring {
+        width: 300px;
+        height: 300px;
+      }
+
+      .timer-time {
+        font-size: 56px;
+      }
+
+      .control-button {
+        width: 56px;
+        height: 56px;
+        font-size: 20px;
+      }
+
+      .control-button.primary {
+        width: 72px;
+        height: 72px;
+      }
+
+      .stats-display {
+        top: 100px;
+        padding: 12px 24px;
+        gap: 24px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+
+      .keyboard-hints {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- SVG Gradients -->
+  <svg style="position: absolute; width: 0; height: 0;">
+    <defs>
+      <linearGradient id="focusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- Particles Background -->
+  <div id="particles-js"></div>
+
+  <!-- Header -->
+  <header>
+    <h1>Oollert Tasks</h1>
+    <nav>
+      <a href="/home">Home</a>
+      <a href="/tasks">Board View</a>
+      <a href="/tasks/smart">Smart View</a>
+      <a href="/tasks/analytics">Analytics</a>
+      <a href="/tasks/focus" style="color: #667eea; font-weight: 700;">Focus</a>
+      <form method="POST" action="/logout" style="display:inline">
+        <button type="submit">Logout</button>
+      </form>
+    </nav>
+  </header>
+
+  <!-- Focus Container -->
+  <div class="focus-container">
+    <!-- Stats Display -->
+    <div class="stats-display" id="statsDisplay">
+      <div class="stat-item">
+        <span class="stat-value" id="completedCount">0</span>
+        <span class="stat-label">Completed</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value" id="sessionCount">1</span>
+        <span class="stat-label">Session</span>
+      </div>
+    </div>
+
+    <!-- Timer -->
+    <div class="focus-timer">
+      <div class="timer-glow"></div>
+      
+      <svg class="timer-ring">
+        <circle class="timer-ring-bg" cx="190" cy="190" r="170" />
+        <circle class="timer-ring-progress" cx="190" cy="190" r="170" 
+                id="timerRing" 
+                stroke-dasharray="1068" 
+                stroke-dashoffset="0" />
+      </svg>
+
+      <div class="timer-content">
+        <h1 class="timer-time" id="timerDisplay">25:00</h1>
+        <p class="timer-label" id="timerLabel">WORK SESSION</p>
+        
+        <div class="timer-controls">
+          <button class="control-button" id="resetBtn" title="Reset (R)">
+            ↻
+          </button>
+          <button class="control-button primary" id="playPauseBtn" title="Start/Pause (Space)">
+            ▶
+          </button>
+          <button class="control-button" id="skipBtn" title="Skip (S)">
+            ⏭
+          </button>
+        </div>
+      </div>
+
+      <div class="mode-selector">
+        <button class="mode-button active" data-mode="work">Work</button>
+        <button class="mode-button" data-mode="short">Short Break</button>
+        <button class="mode-button" data-mode="long">Long Break</button>
+      </div>
+    </div>
+
+    <!-- Keyboard Hints -->
+    <div class="keyboard-hints">
+      <div class="keyboard-hint">
+        <span class="key">Space</span> Start/Pause
+      </div>
+      <div class="keyboard-hint">
+        <span class="key">R</span> Reset
+      </div>
+      <div class="keyboard-hint">
+        <span class="key">S</span> Skip
+      </div>
+    </div>
+  </div>
+
+  <!-- Particles.js Library -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  
+  <script>
+    // Initialize Particles.js
+    particlesJS('particles-js', {
+      particles: {
+        number: {
+          value: 80,
+          density: {
+            enable: true,
+            value_area: 800
+          }
+        },
+        color: {
+          value: '#667eea'
+        },
+        shape: {
+          type: 'circle'
+        },
+        opacity: {
+          value: 0.3,
+          random: true,
+          anim: {
+            enable: true,
+            speed: 1,
+            opacity_min: 0.1,
+            sync: false
+          }
+        },
+        size: {
+          value: 3,
+          random: true,
+          anim: {
+            enable: true,
+            speed: 2,
+            size_min: 0.1,
+            sync: false
+          }
+        },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: '#667eea',
+          opacity: 0.2,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 1,
+          direction: 'none',
+          random: false,
+          straight: false,
+          out_mode: 'out',
+          bounce: false
+        }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: {
+          onhover: {
+            enable: true,
+            mode: 'grab'
+          },
+          onclick: {
+            enable: true,
+            mode: 'push'
+          },
+          resize: true
+        },
+        modes: {
+          grab: {
+            distance: 140,
+            line_linked: {
+              opacity: 0.5
+            }
+          },
+          push: {
+            particles_nb: 4
+          }
+        }
+      },
+      retina_detect: true
+    });
+
+    // Focus Timer Logic
+    class FocusTimer {
+      constructor() {
+        this.durations = {
+          work: 25 * 60,
+          short: 5 * 60,
+          long: 15 * 60
+        };
+        this.mode = 'work';
+        this.timeRemaining = this.durations.work;
+        this.isRunning = false;
+        this.interval = null;
+        this.completedPomodoros = 0;
+        this.sessionNumber = 1;
+        
+        this.init();
+      }
+
+      init() {
+        this.updateDisplay();
+        this.setupEventListeners();
+        this.loadState();
+      }
+
+      setupEventListeners() {
+        document.getElementById('playPauseBtn').addEventListener('click', () => {
+          this.toggleTimer();
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+          this.reset();
+        });
+
+        document.getElementById('skipBtn').addEventListener('click', () => {
+          this.skip();
+        });
+
+        document.querySelectorAll('.mode-button').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const mode = e.target.dataset.mode;
+            this.switchMode(mode);
+          });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+          if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
+            e.preventDefault();
+            this.toggleTimer();
+          } else if (e.code === 'KeyR') {
+            this.reset();
+          } else if (e.code === 'KeyS') {
+            this.skip();
+          }
+        });
+      }
+
+      toggleTimer() {
+        if (this.isRunning) {
+          this.pause();
+        } else {
+          this.start();
+        }
+      }
+
+      start() {
+        this.isRunning = true;
+        document.getElementById('playPauseBtn').innerHTML = '⏸';
+        
+        this.interval = setInterval(() => {
+          this.tick();
+        }, 1000);
+
+        this.saveState();
+      }
+
+      pause() {
+        this.isRunning = false;
+        document.getElementById('playPauseBtn').innerHTML = '▶';
+        clearInterval(this.interval);
+        this.saveState();
+      }
+
+      reset() {
+        if (this.isRunning) {
+          if (!confirm('Reset the timer?')) return;
+        }
+        
+        this.pause();
+        this.timeRemaining = this.durations[this.mode];
+        this.updateDisplay();
+        this.saveState();
+      }
+
+      skip() {
+        if (!confirm('Skip to next session?')) return;
+        
+        this.pause();
+        
+        if (this.mode === 'work') {
+          this.completedPomodoros++;
+          this.updateStats();
+          
+          const nextMode = this.completedPomodoros % 4 === 0 ? 'long' : 'short';
+          this.switchMode(nextMode);
+        } else {
+          this.sessionNumber++;
+          this.updateStats();
+          this.switchMode('work');
+        }
+      }
+
+      tick() {
+        this.timeRemaining--;
+        
+        if (this.timeRemaining <= 0) {
+          this.complete();
+        }
+        
+        this.updateDisplay();
+        this.saveState();
+      }
+
+      complete() {
+        this.pause();
+        this.playSound();
+        this.showNotification();
+        
+        if (this.mode === 'work') {
+          this.completedPomodoros++;
+          this.updateStats();
+          
+          const nextMode = this.completedPomodoros % 4 === 0 ? 'long' : 'short';
+          setTimeout(() => this.switchMode(nextMode), 1000);
+        } else {
+          this.sessionNumber++;
+          this.updateStats();
+          setTimeout(() => this.switchMode('work'), 1000);
+        }
+      }
+
+      switchMode(mode) {
+        if (this.isRunning) {
+          if (!confirm('Switch mode? This will stop the timer.')) return;
+          this.pause();
+        }
+
+        this.mode = mode;
+        this.timeRemaining = this.durations[mode];
+        
+        // Update UI
+        document.querySelectorAll('.mode-button').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.dataset.mode === mode) {
+            btn.classList.add('active');
+          }
+        });
+
+        const labels = {
+          work: 'WORK SESSION',
+          short: 'SHORT BREAK',
+          long: 'LONG BREAK'
+        };
+        document.getElementById('timerLabel').textContent = labels[mode];
+        
+        this.updateDisplay();
+        this.saveState();
+      }
+
+      updateDisplay() {
+        const minutes = Math.floor(this.timeRemaining / 60);
+        const seconds = this.timeRemaining % 60;
+        const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        document.getElementById('timerDisplay').textContent = timeString;
+        
+        // Update progress ring
+        const totalTime = this.durations[this.mode];
+        const progress = (totalTime - this.timeRemaining) / totalTime;
+        const circumference = 2 * Math.PI * 170;
+        const offset = circumference * (1 - progress);
+        
+        document.getElementById('timerRing').style.strokeDashoffset = offset;
+        
+        // Update page title
+        if (this.isRunning) {
+          document.title = `${timeString} - Focus Mode`;
+        } else {
+          document.title = 'Focus Mode - Oollert Tasks';
+        }
+      }
+
+      updateStats() {
+        document.getElementById('completedCount').textContent = this.completedPomodoros;
+        document.getElementById('sessionCount').textContent = this.sessionNumber;
+      }
+
+      playSound() {
+        try {
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          oscillator.frequency.value = 800;
+          oscillator.type = 'sine';
+          
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+          
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.5);
+        } catch (e) {
+          console.log('Audio not supported');
+        }
+      }
+
+      showNotification() {
+        if ('Notification' in window && Notification.permission === 'granted') {
+          const title = this.mode === 'work' ? 'Work Session Complete! 🎉' : 'Break Complete!';
+          const body = this.mode === 'work' 
+            ? 'Time for a break! You earned it.' 
+            : 'Break is over. Ready to focus again?';
+          
+          new Notification(title, { body });
+        }
+      }
+
+      saveState() {
+        const state = {
+          mode: this.mode,
+          timeRemaining: this.timeRemaining,
+          isRunning: this.isRunning,
+          completedPomodoros: this.completedPomodoros,
+          sessionNumber: this.sessionNumber,
+          timestamp: Date.now()
+        };
+        
+        sessionStorage.setItem('focusTimerState', JSON.stringify(state));
+      }
+
+      loadState() {
+        const state = sessionStorage.getItem('focusTimerState');
+        if (state) {
+          const parsed = JSON.parse(state);
+          
+          // Check if state is from today
+          const stateDate = new Date(parsed.timestamp);
+          const today = new Date();
+          
+          if (stateDate.toDateString() === today.toDateString()) {
+            this.mode = parsed.mode;
+            this.timeRemaining = parsed.timeRemaining;
+            this.completedPomodoros = parsed.completedPomodoros;
+            this.sessionNumber = parsed.sessionNumber;
+            
+            this.switchMode(this.mode);
+            this.updateStats();
+          }
+        }
+
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+          Notification.requestPermission();
+        }
+      }
+    }
+
+    // Initialize timer
+    const focusTimer = new FocusTimer();
+  </script>
+</body>
+</html>
